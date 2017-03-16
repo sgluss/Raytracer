@@ -5,12 +5,12 @@
 class Ray
 {
 private:
-	Vec origin, direction;
+	Vec _origin, _direction;
 
 public:
 
-	Vec getOrigin() { return origin; }
-	Vec getDirection() { return direction; }
+	Vec getOrigin() { return _origin; }
+	Vec getDirection() { return _direction; }
 
 	Ray();
 

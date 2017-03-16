@@ -2,14 +2,14 @@
 
 Light::Light()
 {
-	position = Vec(0, 0, 0);
-	color = Color(1, 1, 1, 0);
+	_position = Vec(0, 0, 0);
+	_color = Color(1, 1, 1, 0);
 }
 
 Light::Light(Vec p, Color c)
 {
-	position = p;
-	color = c;
+	_position = p;
+	_color = c;
 }
 
 Light::~Light()

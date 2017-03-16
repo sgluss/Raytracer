@@ -2,17 +2,17 @@
 
 Color::Color()
 {
-	red = 0.5;
-	green = 0.5;
-	blue = 0.5;
+	_red = 0.5;
+	_green = 0.5;
+	_blue = 0.5;
 }
 
 Color::Color(double r, double g, double b, double s)
 {
-	red = r;
-	green = g;
-	blue = b;
-	special = s;
+	_red = r;
+	_green = g;
+	_blue = b;
+	_special = s;
 }
 
 Color::~Color()

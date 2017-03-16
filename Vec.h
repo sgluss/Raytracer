@@ -5,44 +5,44 @@
 class Vec
 {
 private:
-	double x, y, z;
+	double _x, _y, _z;
 
 public:
 
-	double getX() { return x; }
-	double getY() { return x; }
-	double getZ() { return x; }
+	double getX() { return _x; }
+	double getY() { return _x; }
+	double getZ() { return _x; }
 
 	double magnitude() {
-		return sqrt(x*x + y*y + z*z);
+		return sqrt(_x*_x + _y*_y + _z*_z);
 	}
 
 	Vec normalize () {
 		double mag = this->magnitude();
-		return Vec(x / mag, y / mag, z / mag);
+		return Vec(_x / mag, _y / mag, _z / mag);
 	}
 
 	Vec negative() {
-		return Vec(-x, -y, -z);
+		return Vec(-_x, -_y, -_z);
 	}
 
 	double dotProduct(Vec v) {
-		return x*v.getX() + y*v.getY() + z*v.getZ();
+		return _x*v.getX() + _y*v.getY() + _z*v.getZ();
 	}
 
 	Vec crossProduct(Vec v) {
 		return Vec(
-			y*v.getZ() - z*v.getY(),
-			z*v.getX() - x*v.getZ(),
-			x*v.getY() - y*v.getX());
+			_y*v.getZ() - _z*v.getY(),
+			_z*v.getX() - _x*v.getZ(),
+			_x*v.getY() - _y*v.getX());
 	}
 
 	Vec vecAdd(Vec v) {
-		return Vec(x+v.getX(), y+v.getY(), z+v.getZ());
+		return Vec(_x+v.getX(), _y+v.getY(), _z+v.getZ());
 	}
 
 	Vec vecMult(double scalar) {
-		return Vec(x * scalar, y * scalar, z * scalar);
+		return Vec(_x * scalar, _y * scalar, _z * scalar);
 	}
 
 	Vec();

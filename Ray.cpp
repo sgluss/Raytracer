@@ -2,14 +2,14 @@
 
 Ray::Ray()
 {
-	origin = Vec(0, 0, 0);
-	direction = Vec(1, 0, 0);
+	_origin = Vec(0, 0, 0);
+	_direction = Vec(1, 0, 0);
 }
 
 Ray::Ray(Vec o, Vec d)
 {
-	origin = o;
-	direction = d;
+	_origin = o;
+	_direction = d;
 }
 
 Ray::~Ray()

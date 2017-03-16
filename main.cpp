@@ -20,6 +20,10 @@
 #include "Color.h"
 #include "Light.h"
 
+#include "Object.h"
+#include "Sphere.h"
+#include "Plane.h"
+
 using namespace std;
 
 struct RGB {
@@ -111,6 +115,7 @@ int main() {
 
 	RGB *pixels = new RGB[n];
 
+	Vec origin(0, 0, 0);
 	Vec vecX(1, 0, 0);
 	Vec vecY(0, 1, 0);
 	Vec vecZ(0, 0, 1);
@@ -128,13 +133,21 @@ int main() {
 
 	Cam sceneCam(camPos, camDir, camRight, camDown);
 
+	//	Establish colors
 	Color whiteLight(1, 1, 1, 0);
 	Color green(0.5, 1.0, 0.5, 0.3);
+	Color deepPurple(0.66, 0.33, 0.66, 0.15);
 	Color grey(0.5, 0.5, 0.5, 0);
 	Color black(0, 0, 0, 0);
 
+	//	Set Scene light
 	Vec LightPos(-8, 10, -10);
 	Light sceneLight(LightPos, whiteLight);
+
+	//	Scene objects
+	
+	Sphere sphere1(origin, 1, green);
+	Plane plane1(vecY, -1, deepPurple);
 
 	for (int x = 0; x < width; x++) {
 		for (int y = 0; y < height; y++) {

@@ -6,13 +6,13 @@
 class Light
 {
 private:
-	Vec position;
-	Color color;
+	Vec _position;
+	Color _color;
 
 public:
 
-	Vec getPosition() { return position; }
-	Color getColor() { return color; }
+	Vec getPosition() { return _position; }
+	Color getColor() { return _color; }
 
 	Light();
 

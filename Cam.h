@@ -5,14 +5,14 @@
 class Cam
 {
 private:
-	Vec camPosition, camDirection, camRight, camDown;
+	Vec _camPosition, _camDirection, _camRight, _camDown;
 
 public:
 
-	Vec getCamPosition() { return camPosition; }
-	Vec getCamDirection() { return camDirection; }
-	Vec getCamRight() { return camRight; }
-	Vec getCamDown() { return camDown; }
+	Vec getCamPosition() { return _camPosition; }
+	Vec getCamDirection() { return _camDirection; }
+	Vec getCamRight() { return _camRight; }
+	Vec getCamDown() { return _camDown; }
 
 	Cam();
 

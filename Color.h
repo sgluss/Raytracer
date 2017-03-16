@@ -3,19 +3,19 @@
 class Color
 {
 private:
-	double red, green, blue, special;
+	double _red, _green, _blue, _special;
 
 public:
 
-	double getRed() { return red; }
-	double getGreen() { return green; }
-	double getBlue() { return blue; }
-	double getSpecial() { return special; }
+	double getRed() { return _red; }
+	double getGreen() { return _green; }
+	double getBlue() { return _blue; }
+	double getSpecial() { return _special; }
 
-	void setRed(double value) { red = value; };
-	void setGreen(double value) { green = value; };
-	void setBlue(double value) { blue = value; };
-	void setSpecial(double value) { special = value; };
+	void setRed(double value) { _red = value; };
+	void setGreen(double value) { _green = value; };
+	void setBlue(double value) { _blue = value; };
+	void setSpecial(double value) { _special = value; };
 
 	Color();
 
