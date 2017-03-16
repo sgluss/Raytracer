@@ -19,6 +19,14 @@ public:
 	double getRadius() { return _radius; }
 	Color getColor() { return _color; }
 
+	Vec getNormalAt(Vec point) {
+		//	Normal points away from the center of the sphere
+		Vec normalVec = point.vecAdd(_center.negative().normalize());
+		return normalVec;
+	}
+
+	double findIntersection(Ray ray);
+
 	Sphere();
 
 	Sphere(Vec, double, Color);

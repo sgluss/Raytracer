@@ -103,6 +103,37 @@ void saveImage(const char *fileName, int w, int h, int dpi, RGB *data) {
 	fclose(file);
 }
 
+int getNearestObject(vector<double> intersections) {
+	if (intersections.size() == 0) {
+		return -1;
+	}
+	else if (intersections.size() == 1) {
+		if (intersections.at(0) > 0) {
+			return 0;
+		}
+		else {
+			//	The ray missed
+			return -1;
+		}
+	}
+	else {
+		//	There is  more than 1 intersection
+		double min = DBL_MAX;
+		//	return -1 if all intersections are negative
+		int minIndex = -1;
+		int curVal;
+
+		for (int i = 0; i < intersections.size(); i++) {
+			curVal = intersections.at(i);
+			if (curVal > 0 && curVal < min) {
+				min = curVal;
+				minIndex = i;
+			}
+		}
+		return minIndex;
+	}
+}
+
 int main() {
 	cout << "rendering..." << endl;
 
@@ -111,7 +142,10 @@ int main() {
 	int dpi = 72;
 	int width = 800;
 	int height = 600;
+	
 	int n = width * height;
+
+	double aspectRatio = (double)width / (double)height;
 
 	RGB *pixels = new RGB[n];
 
@@ -145,13 +179,55 @@ int main() {
 	Light sceneLight(LightPos, whiteLight);
 
 	//	Scene objects
-	
 	Sphere sphere1(origin, 1, green);
 	Plane plane1(vecY, -1, deepPurple);
+
+	vector<Object*> sceneObjects;
+	sceneObjects.push_back(dynamic_cast<Object*>(&sphere1));
+	sceneObjects.push_back(dynamic_cast<Object*>(&plane1));
+
+	//	offsets for camera direction when not using AntiAliasing
+	//	used to create image plane for camera
+	double xOffset, yOffset;
+
+	//	Cam Ray preallocation. 
+	//	Ray will travel from camera, through specific x,y pixel in image plane into the scene
+	//	to look for intersections with objects
+	Vec camRayOrigin = sceneCam.getCamPosition();
+	Vec camRayDirection;
+	Ray camRay(camRayOrigin, camRayDirection);
+
+	vector<double> intersections;
+	int indexOfNearestObject;
 
 	for (int x = 0; x < width; x++) {
 		for (int y = 0; y < height; y++) {
 			index = y * width + x;
+
+			//	start with no AntiAliasing, set offsets for different x/y ratios
+			if (width > height) {
+				xOffset = ((x + 0.5) / width) * aspectRatio - ((width - height) / (double)height) / 2;
+				yOffset = ((height - y) + 0.5) / height;
+			}
+			else if (height > width)
+			{
+				xOffset = (x + 0.5) / width;
+				yOffset = (((height - y) + 0.5) / height) / aspectRatio - (((height - width) / (double)width) / 2);
+			}
+			else
+			{
+				xOffset = (x + 0.5) / width;
+				yOffset = ((height - y) + 0.5) / height;
+			}
+
+			camRayDirection = camDir.vecAdd(camRight.vecMult(xOffset - 0.5).vecAdd(camDown.vecMult(yOffset - 0.5))).normalize();
+
+			for (int i = 0; i < sceneObjects.size(); i++)
+			{
+				intersections.push_back(sceneObjects.at(i)->findIntersection(camRay));
+			}
+
+			indexOfNearestObject = getNearestObject(intersections);
 
 			if (x > width / 4 && x < (width * 3 / 4) &&
 				y > height / 4 && y < (height * 3 / 4)) {
@@ -164,6 +240,8 @@ int main() {
 				pixels[index].g = 0;
 				pixels[index].b = 0;
 			}
+
+			intersections.clear();
 		}
 	}
 
