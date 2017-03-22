@@ -8,9 +8,10 @@ class Object
 {
 public:
 
-	Color getColor() { return Color(0.0, 0.0, 0.0, 0); }
+	virtual Color getColor() { return Color(0.0, 0.0, 0.0, 0); }
 
-	double findIntersection(Ray ray) {
+	//	Will be overloaded by the object subclasses and so is marked virtual
+	virtual double findIntersection(Ray ray) {
 		return 0;
 	}
 

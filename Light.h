@@ -1,9 +1,10 @@
 #pragma once
 
+#include "Source.h"
 #include "Vec.h"
 #include "Color.h"
 
-class Light
+class Light : public Source
 {
 private:
 	Vec _position;

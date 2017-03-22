@@ -24,7 +24,7 @@ public:
 	}
 
 	//	returns distance from ray origin to point of intersection
-	double findIntersection(Ray ray) {
+		double findIntersection(Ray ray) {
 		Vec rayDirection = ray.getDirection();
 		double a = rayDirection.dotProduct(_normal);
 

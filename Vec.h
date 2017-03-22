@@ -10,8 +10,8 @@ private:
 public:
 
 	double getX() { return _x; }
-	double getY() { return _x; }
-	double getZ() { return _x; }
+	double getY() { return _y; }
+	double getZ() { return _z; }
 
 	double magnitude() {
 		return sqrt(_x*_x + _y*_y + _z*_z);

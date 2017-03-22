@@ -121,7 +121,7 @@ int getNearestObject(vector<double> intersections) {
 		double min = DBL_MAX;
 		//	return -1 if all intersections are negative
 		int minIndex = -1;
-		int curVal;
+		double curVal;
 
 		for (int i = 0; i < intersections.size(); i++) {
 			curVal = intersections.at(i);
@@ -132,6 +132,16 @@ int getNearestObject(vector<double> intersections) {
 		}
 		return minIndex;
 	}
+}
+
+Color getColorAt(Vec intersectionPosition, 
+					Vec intersectingRayDirection, 
+					vector<Object*> objects, 
+					int indexOfNearestObject, 
+					double accuracy, 
+					double ambientLight, 
+					vector<Source*> sources) {
+	return Color(1, 1, 1, 0);
 }
 
 int main() {
@@ -155,7 +165,7 @@ int main() {
 	Vec vecZ(0, 0, 1);
 
 	//	Build inputs for Scene camera
-	Vec camPos(2, 1, -2);
+	Vec camPos(3.0, 1.5, -4.0);
 	Vec camTarget(0, 0, 0);
 	Vec difference(camPos.getX() - camTarget.getX(),
 					camPos.getY() - camTarget.getY(),
@@ -174,17 +184,16 @@ int main() {
 	Color grey(0.5, 0.5, 0.5, 0);
 	Color black(0, 0, 0, 0);
 
-	//	Set Scene light
+	//	Set Scene lights
 	Vec LightPos(-8, 10, -10);
 	Light sceneLight(LightPos, whiteLight);
+	vector<Source*> sceneLights{ &sceneLight };
 
 	//	Scene objects
 	Sphere sphere1(origin, 1, green);
 	Plane plane1(vecY, -1, deepPurple);
 
-	vector<Object*> sceneObjects;
-	sceneObjects.push_back(dynamic_cast<Object*>(&sphere1));
-	sceneObjects.push_back(dynamic_cast<Object*>(&plane1));
+	vector<Object*> sceneObjects{ &sphere1, &plane1 };
 
 	//	offsets for camera direction when not using AntiAliasing
 	//	used to create image plane for camera
@@ -199,6 +208,13 @@ int main() {
 
 	vector<double> intersections;
 	int indexOfNearestObject;
+
+	Color color;
+
+	//	Variables for light properties
+	double ambientLight = 0.2;
+	double accuracy = 0.000001;
+
 
 	for (int x = 0; x < width; x++) {
 		for (int y = 0; y < height; y++) {
@@ -220,7 +236,9 @@ int main() {
 				yOffset = ((height - y) + 0.5) / height;
 			}
 
+			//	setting direction for this specific ray before the intersection checks
 			camRayDirection = camDir.vecAdd(camRight.vecMult(xOffset - 0.5).vecAdd(camDown.vecMult(yOffset - 0.5))).normalize();
+			camRay.setDirection(camRayDirection);
 
 			for (int i = 0; i < sceneObjects.size(); i++)
 			{
@@ -229,16 +247,23 @@ int main() {
 
 			indexOfNearestObject = getNearestObject(intersections);
 
-			if (x > width / 4 && x < (width * 3 / 4) &&
-				y > height / 4 && y < (height * 3 / 4)) {
-				pixels[index].r = 80;
-				pixels[index].g = 40;
-				pixels[index].b = 20;
-			}
-			else {
-				pixels[index].r = 80;
+			if (indexOfNearestObject == -1) {
+				pixels[index].r = 0;
 				pixels[index].g = 0;
 				pixels[index].b = 0;
+			}
+			else {
+				if (intersections.at(indexOfNearestObject) > accuracy) {
+					//	determine the position and direction vectors at the intersection
+					Vec intersectionPosition = camRayOrigin.vecAdd(camRayDirection.vecMult(intersections.at(indexOfNearestObject)));
+					Vec intersectingRayDirection = camRayDirection;
+
+					color = getColorAt(intersectionPosition, intersectingRayDirection, sceneObjects, indexOfNearestObject, accuracy, ambientLight, sceneLights);
+
+					pixels[index].r = color.getRed();
+					pixels[index].g = color.getGreen();
+					pixels[index].b = color.getBlue();
+				}
 			}
 
 			intersections.clear();

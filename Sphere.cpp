@@ -12,10 +12,9 @@ double Sphere::findIntersection(Ray ray)
 	double rayDirectionY = rayDirection.getY();
 	double rayDirectionZ = rayDirection.getZ();
 
-	Vec sphereCenter = _center;
-	double sphereCenterX = sphereCenter.getX();
-	double sphereCenterY = sphereCenter.getY();
-	double sphereCenterZ = sphereCenter.getZ();
+	double sphereCenterX = _center.getX();
+	double sphereCenterY = _center.getY();
+	double sphereCenterZ = _center.getZ();
 
 	double a = 1;
 	double b = (2 * (rayOriginX - sphereCenterX) * rayDirectionX) +
@@ -24,15 +23,16 @@ double Sphere::findIntersection(Ray ray)
 
 	double c = pow(rayOriginX - sphereCenterX, 2) +
 		pow(rayOriginY - sphereCenterY, 2) +
-		pow(rayOriginZ - sphereCenterZ, 2);
+		pow(rayOriginZ - sphereCenterZ, 2) -
+		(_radius*_radius);
 
 	double discriminant = b * b - 4 * c;
 	double root;
 
 	if (discriminant > 0) {
 		//	The ray intersects the sphere
-		//	The first root. Magic number at end helps with accuracy errors for some reason
-		//	TODO : sam - figure out if this magic number actually does anything
+		//	The first root. Magic number at end helps with accuracy errors
+		//	This ensures that all intersections are on the outside of the sphere surface
 		root = ((-1 * b - sqrt(discriminant)) / 2) - 0.000001;
 
 		if (root > 0) {
