@@ -134,14 +134,81 @@ int getNearestObject(vector<double> intersections) {
 	}
 }
 
+Vec reflect(Vec rayDirection, Vec normal) {
+	double dotProduct = normal.dotProduct(rayDirection.negative());
+	Vec retVal = normal.vecMult(dotProduct);
+	retVal = retVal.vecAdd(rayDirection);
+	retVal = retVal.vecMult(2.0);
+	retVal = rayDirection.negative().vecAdd(retVal);
+	retVal = retVal.normalize();
+	return retVal;
+}
+
 Color getColorAt(Vec intersectionPosition, 
 					Vec intersectingRayDirection, 
-					vector<Object*> objects, 
+					vector<Object*> sceneObjects, 
 					int indexOfNearestObject, 
 					double accuracy, 
 					double ambientLight, 
 					vector<Source*> sources) {
-	return Color(1, 1, 1, 0);
+
+	Color nearestObjectColor = sceneObjects.at(indexOfNearestObject)->getColor();
+	Vec nearestObjectNormal = sceneObjects.at(indexOfNearestObject)->getNormalAt(intersectionPosition);
+	
+	Color finalColor = nearestObjectColor.colorScalar(ambientLight);
+
+	//	Loop through light sources
+	for (int lightIndex = 0; lightIndex < sources.size(); lightIndex++) {
+		Vec lightDir = sources.at(lightIndex)->getLightPosition().vecAdd(intersectionPosition.negative()).normalize();
+
+		//	determine angle between the light direction and the normal vector on the surface of the object at the intersection point
+		float cosine = nearestObjectNormal.dotProduct(lightDir);
+
+		if (cosine > 0) {
+			//	test for shadows
+			Vec distanceToLight = sources.at(lightIndex)->getLightPosition().vecAdd(intersectionPosition.negative()).normalize();
+			double distanceToLightMagnitude = distanceToLight.magnitude();
+
+			Ray shadowRay(intersectionPosition, distanceToLight);
+
+			vector<double> secondaryIntersections;
+
+			for (int objectIndex = 0; objectIndex < sceneObjects.size(); objectIndex++) {
+				//	determine if shadow ray intersects any objects
+				secondaryIntersections.push_back(sceneObjects.at(objectIndex)->findIntersection(shadowRay));
+			}
+
+			bool shadowed = false;
+			double intersection;
+			for (int c = 0; c < secondaryIntersections.size(); c++) {
+				//	If there is an intersection, and it's nearer to the light source, then this pixel is in shadow
+				intersection = secondaryIntersections.at(c);
+				if (intersection > accuracy && intersection <= distanceToLightMagnitude) {
+						shadowed = true;
+				}
+			}
+
+			if (shadowed == false) {
+				finalColor = finalColor.colorAdd(nearestObjectColor.colorMultiply(sources.at(lightIndex)->getColor()).colorScalar(cosine));
+			
+				if (nearestObjectColor.getSpecial() > 0 && nearestObjectColor.getSpecial() <= 1) {
+					//	object is shiny
+					Vec reflectionDir = reflect(intersectingRayDirection, nearestObjectNormal);
+
+					double specular = reflectionDir.dotProduct(lightDir);
+					if (specular > 0) {
+						specular = pow(specular, 10);
+						finalColor = finalColor.colorAdd(sources.at(lightIndex)->getColor().colorScalar(specular * nearestObjectColor.getSpecial()));
+					}
+				}
+				else {
+					finalColor = finalColor.colorAdd(nearestObjectColor.colorMultiply(sources.at(lightIndex)->getColor()).colorScalar(cosine));
+				}
+			}
+		}
+	}
+	finalColor.clip();
+	return finalColor;
 }
 
 int main() {
@@ -185,7 +252,7 @@ int main() {
 	Color black(0, 0, 0, 0);
 
 	//	Set Scene lights
-	Vec LightPos(-8, 10, -10);
+	Vec LightPos(-7, 10, -10);
 	Light sceneLight(LightPos, whiteLight);
 	vector<Source*> sceneLights{ &sceneLight };
 

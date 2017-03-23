@@ -15,6 +15,10 @@ public:
 		return 0;
 	}
 
+	virtual Vec getNormalAt(Vec point) {
+		return Vec(0, 0, 0);
+	}
+
 	Object();
 
 	~Object();

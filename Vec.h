@@ -19,6 +19,9 @@ public:
 
 	Vec normalize () {
 		double mag = this->magnitude();
+		if (mag < 0.000001) {
+			return Vec(0, 0, 0);
+		}
 		return Vec(_x / mag, _y / mag, _z / mag);
 	}
 

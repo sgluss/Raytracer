@@ -46,6 +46,8 @@ public:
 			_special);
 	}
 
+	void clip();
+
 	Color();
 
 	Color(double, double, double, double);
