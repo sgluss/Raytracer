@@ -21,7 +21,7 @@ public:
 
 	Vec getNormalAt(Vec point) {
 		//	Normal points away from the center of the sphere
-		Vec normalVec = point.vecAdd(_center.negative().normalize());
+		Vec normalVec = point.vecAdd(_center.negative()).normalize();
 		return normalVec;
 	}
 

@@ -12,7 +12,7 @@ private:
 
 public:
 
-	Vec getPosition() { return _position; }
+	Vec getLightPosition() { return _position; }
 	Color getColor() { return _color; }
 
 	Light();
